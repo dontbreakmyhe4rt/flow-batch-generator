@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self' data:;" />
+  <title>Flow Batch Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <aside class="sidebar">
+
+      <section class="side-block">
+        <h2>Trình duyệt <span class="tag" id="profileCount"></span></h2>
+        <div id="profileList" class="profiles"></div>
+        <div class="side-actions">
+          <button id="btnAddProfile" class="ghost sm">+ Cửa sổ</button>
+          <button id="btnRefreshTabs" class="ghost sm">↻ Làm mới</button>
+        </div>
+        <p class="note tiny">
+          Mỗi cửa sổ là một profile Chrome độc lập — đăng nhập một tài khoản Google riêng cho từng cái.
+        </p>
+      </section>
+
+      <section class="side-block grow">
+        <h2>Task <span class="tag" id="jobCount"></span></h2>
+        <div id="jobList" class="jobs"></div>
+        <div class="side-actions">
+          <button id="btnAddJob" class="ghost sm">+ Thêm Task</button>
+          <button id="btnClearJobs" class="ghost sm danger-text" title="Xoá toàn bộ Task">🗑 Xoá hết</button>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- ═══════════════ PANEL CỦA VIỆC ĐANG CHỌN ═══════════════ -->
+    <main class="panel">
+
+      <header class="panel-head">
+        <input type="text" id="jobName" class="job-name" placeholder="Tên Task" />
+        <span class="badge" id="jobBadge"></span>
+        <span class="spacer"></span>
+        <button id="btnResetJob" class="ghost sm" title="Xoá mọi lựa chọn của Task này, đưa về mặc định">↺ Đặt lại</button>
+        <button id="btnRemoveJob" class="ghost sm" title="Xoá Task này">✕ Xoá Task</button>
+      </header>
+
+      <div class="panel-body">
+
+        <section class="card">
+          <h2>Đầu vào</h2>
+
+          <div class="row">
+            <label for="configPath">Config JSON</label>
+            <input type="text" id="configPath" placeholder="Chọn file config.json…" readonly />
+            <button id="btnPickConfig" class="ghost">Chọn…</button>
+          </div>
+
+          <div class="row">
+            <label for="outDir">Thư mục lưu</label>
+            <input type="text" id="outDir" placeholder="Chọn thư mục tải ảnh về…" readonly />
+            <button id="btnPickOut" class="ghost">Chọn…</button>
+            <button id="btnOpenOut" class="ghost" title="Mở thư mục">📂</button>
+          </div>
+
+          <div class="row">
+            <label for="tabSelect">Tab sẽ dùng</label>
+            <select id="tabSelect"></select>
+            <button id="btnFocusTab" class="ghost" title="Đưa tab này lên trước">↗</button>
+          </div>
+
+          <p class="err" id="configErr" hidden></p>
+          <p class="note" id="tabWarn" hidden></p>
+        </section>
+
+        <section class="card">
+          <h2>Tham số Flow</h2>
+
+          <div class="row wrap">
+            <div class="field">
+              <label for="model">Model <button id="btnReadModels" class="linkish" type="button">↻ đọc từ trang</button></label>
+              <select id="model"></select>
+            </div>
+            <div class="field">
+              <label for="resolution">Độ phân giải tải về</label>
+              <select id="resolution"></select>
+            </div>
+          </div>
+
+          <div class="row wrap" style="margin-top:.9rem">
+            <div class="field">
+              <label>Tỉ lệ khung hình</label>
+              <div class="segmented" id="aspect"></div>
+            </div>
+            <div class="field">
+              <label>Số ảnh mỗi prompt</label>
+              <div class="segmented" id="count"></div>
+            </div>
+          </div>
+
+          <p class="note" id="multiNote" hidden>
+            Với x2 trở lên, ảnh thứ 2 trở đi được lưu thành <code>&lt;file_name&gt;_2</code>, <code>_3</code>…
+          </p>
+        </section>
+
+        <section class="card">
+          <h2>Nâng cao</h2>
+          <div class="row wrap">
+            <div class="field small">
+              <label for="delay">Nghỉ giữa các prompt (giây)</label>
+              <input type="number" id="delay" min="0" max="120" step="1" />
+            </div>
+            <div class="field small">
+              <label for="timeout">Chờ ảnh tối đa (giây)</label>
+              <input type="number" id="timeout" min="10" max="900" step="10" />
+            </div>
+            <div class="field small">
+              <label for="retries">Số lần thử lại</label>
+              <input type="number" id="retries" min="0" max="5" step="1" />
+            </div>
+            <div class="field small">
+              <label for="onDuplicate">Nếu trùng tên file</label>
+              <select id="onDuplicate">
+                <option value="suffix">Thêm _2, _3…</option>
+                <option value="overwrite">Ghi đè</option>
+                <option value="skip">Bỏ qua</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="controls">
+            <button id="btnStart" class="primary">▶ Bắt đầu</button>
+            <button id="btnRetry" class="ghost">↻ Chạy lại item lỗi</button>
+            <button id="btnPause" class="ghost" disabled>⏸ Tạm dừng</button>
+            <button id="btnStop" class="danger" disabled>■ Dừng</button>
+            <label class="check"><input type="checkbox" id="rerunAll" /> Chạy lại từ đầu</label>
+          </div>
+          <div class="progress">
+            <div class="bar"><span id="barFill"></span></div>
+            <span id="progressText" class="mono">0/0</span>
+          </div>
+        </section>
+
+        <section class="card grow">
+          <div class="tabs">
+            <button class="tab on" data-panel="items">Danh sách</button>
+            <button class="tab" data-panel="log">Log</button>
+          </div>
+
+          <div class="pane" id="panel-items">
+            <table id="itemsTable">
+              <thead>
+                <tr><th style="width:2.5rem">#</th><th style="width:9rem">file_name</th><th>prompt</th><th style="width:8rem">trạng thái</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p class="empty" id="itemsEmpty">Chọn file config để xem danh sách.</p>
+          </div>
+
+          <div class="pane" id="panel-log" hidden>
+            <pre id="log" class="mono"></pre>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══════════════ HỘP THOẠI XÁC NHẬN ═══════════════ -->
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle"></h3>
+      <p class="modal-msg" id="modalMsg"></p>
+      <ul class="modal-list" id="modalList" hidden></ul>
+      <p class="modal-detail" id="modalDetail"></p>
+      <div class="modal-actions">
+        <button id="modalCancel" class="ghost">Huỷ</button>
+        <button id="modalOk" class="primary">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

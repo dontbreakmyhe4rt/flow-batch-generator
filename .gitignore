@@ -1,0 +1,9 @@
+node_modules/
+profiles/
+profiles.json
+.chrome-profile/
+out/
+settings.json
+jobs.json
+.state.json
+dist/

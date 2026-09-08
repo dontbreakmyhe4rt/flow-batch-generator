@@ -1,0 +1,8 @@
+[
+  { "file_name": "img1", "prompt": "Hình ảnh đơn giản chứa text img1 ở giữa màn hình, chữ trắng nền đen" },
+  { "file_name": "img2", "prompt": "Hình ảnh đơn giản chứa text img2 ở giữa màn hình, chữ trắng nền đen" },
+    { "file_name": "img3", "prompt": "Hình ảnh đơn giản chứa text img3 ở giữa màn hình, chữ trắng nền đen" },
+      { "file_name": "img4", "prompt": "Hình ảnh đơn giản chứa text img4 ở giữa màn hình, chữ trắng nền đen" },
+        { "file_name": "img5", "prompt": "Hình ảnh đơn giản chứa text img5 ở giữa màn hình, chữ trắng nền đen" },
+          { "file_name": "img6", "prompt": "Hình ảnh đơn giản chứa text img6 ở giữa màn hình, chữ trắng nền đen" }
+]

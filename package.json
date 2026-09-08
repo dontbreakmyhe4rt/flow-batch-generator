@@ -1,0 +1,75 @@
+{
+  "name": "flow-batch-generator",
+  "version": "1.0.0",
+  "description": "Batch tao anh tren Google Flow tu config.json va tai ve thu muc chi dinh",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "node node_modules/electron-builder/cli.js",
+    "dist:installer": "node node_modules/electron-builder/cli.js --win nsis",
+    "dist:portable": "node node_modules/electron-builder/cli.js --win portable",
+    "icon": "node build/make-icon.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "playwright-core": "^1.49.0"
+  },
+  "build": {
+    "appId": "com.flowbatch.generator",
+    "productName": "Flow Batch Generator",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "ui/**/*",
+      "config.example.json",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "config.example.json",
+        "to": "config.example.json"
+      }
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Flow Batch Generator",
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "${productName}-${version}-Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-Portable.${ext}"
+    },
+    "compression": "maximum"
+  }
+}
